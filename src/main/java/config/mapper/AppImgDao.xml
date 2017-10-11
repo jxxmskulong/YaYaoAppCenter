@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.AppImgDao">
+<!-- 添加应用图片 -->
+<insert id="addAppImg" parameterType="AppImg" keyProperty="appImgId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  app_img_tb 
+   		 (
+   		 img_address,
+   		 order_num,
+   		 update_date,
+   		 app_id)
+   VALUES
+    	 (
+    	 #{imgAddress},
+    	 #{orderNum},
+    	 #{updateDate},
+    	 #{appId})  
+</insert>  
+<!-- 更新应用图片 -->
+<update id="updateAppImg" parameterType="AppImg" >  
+    UPDATE 
+    	app_img_tb 
+    SET 
+    	img_address=#{imgAddress},
+    	order_num=#{orderNum},
+    	update_date=#{updateDate},
+    	app_id=#{appId}
+    WHERE
+    	 app_img_id=#{appImgId} 
+</update> 
+<!-- 删除应用图片-->
+<delete id="delAppImg"  parameterType="Integer" >  
+    DELETE FROM
+    	 app_img_tb 
+    	 WHERE app_img_id=#{appImgId}
+</delete>  
+<!-- 加载应用图片-->
+<select id="loadAppImg" parameterType="Integer" resultType="AppImg" >
+SELECT 
+		 app_img_id,
+	 	 img_address,
+   		 order_num,
+   		 update_date,
+   		 app_id
+FROM app_img_tb 
+WHERE app_img_id=#{appImgId}
+</select>
+
+<!-- 分页查询应用图片-->
+<select id="browsePagingAppImg" resultType="AppImg">  
+        SELECT
+	     app_img_id,
+	 	 img_address,
+   		 order_num,
+   		 update_date,
+   		 app_id
+	FROM app_img_tb
+	<where>
+	<if test="appId!=null">
+	AND app_id=#{appId}
+	</if>
+	<if test="orderNum!=null">
+	AND order_num=#{orderNum}
+	</if>
+	<if test="updateDate!=null">
+	AND Date(update_date)=Date(#{updateDate})
+	</if>
+	AND ${orderName} 
+	<if test="orderWay=='asc'">
+	<![CDATA[>=]]> 
+	</if>
+	<if test="orderWay=='desc'">
+	  <![CDATA[<= ]]>
+	</if>
+	(SELECT ${orderName} FROM app_img_tb 
+	<where>
+	<if test="appId!=null">
+	AND app_id=#{appId}
+	</if>
+	<if test="orderNum!=null">
+	AND order_num=#{orderNum}
+	</if>
+	<if test="updateDate!=null">
+	AND Date(update_date)=Date(#{updateDate})
+	</if>
+	</where>
+		ORDER BY 
+			${orderName}  ${orderWay}
+		LIMIT #{pageNum}, 1
+		) 
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(app_img_id)
+	FROM app_img_tb
+	<where>
+	<if test="appId!=null">
+	AND app_id=#{appId}
+	</if>
+	<if test="orderNum!=null">
+	AND order_num=#{orderNum}
+	</if>
+	<if test="updateDate!=null">
+	AND Date(update_date)=Date(#{updateDate})
+	</if>
+	</where>
+</select>   
+   
+ 
+</mapper>

@@ -1,0 +1,49 @@
+<!-- 左边导航 -->
+<div class="clearfix metismenu ">
+	<aside class="sidebar boxShaow">
+		<nav class="sidebar-nav" style="background-image:linear-gradient(to right,#ccc 0, #000 0 )">
+			<ul id="leftBar">
+				<li>
+					<a ui-sref="main.index">
+						<span class="glyphicon glyphicon-home"></span>
+						<span >首页</span>
+					</a>
+				</li>
+				<li  ng-show="sessionRole.name=='超级管理员'||sessionRole.name=='运营管理员'">
+					<a href="javascript:;">
+						<span class="glyphicon glyphicon-modal-window"></span>
+						<span >应用管理 </span>
+						<span class="glyphicon arrow"></span>
+					</a>
+					<ul>
+						<li>
+							<a href="javascript:;">
+								<span class="glyphicon glyphicon-modal-window"></span>
+								<span >应用管理</span>
+								<span class="glyphicon arrow"></span>
+							</a>
+							<ul>
+								<li><a class="text-center" ui-sref="main.appList">应用列表</a></li>
+								<li><a class="text-center" ui-sref="main.appAdd">增加应用</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li ng-show="sessionRole.name=='超级管理员'||sessionRole.name=='运营管理员'">
+					<a href="javascript:;">
+						<span class="glyphicon glyphicon-user"></span>
+						<span >账户管理 </span>
+						<span class="glyphicon arrow"></span>
+					</a>
+					<ul>
+						 <!-- <li><a class="text-center" ui-sref="main.acountData">账户数据</a></li>
+				        <li><a class="text-center" ui-sref="main.financeData">财务数据</a></li> -->
+						<li><a class="text-center" ui-sref="main.acountList">账户列表</a></li>
+						<li><a class="text-center" ui-sref="main.acountAdd">增加账户</a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+	</aside>
+</div> 
+ 

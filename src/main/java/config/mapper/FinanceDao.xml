@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.FinanceDao">
+<!-- 添加财务 -->
+<insert id="addFinance" parameterType="Finance" keyProperty="financeId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  finance_tb 
+   		 (recharge,update_date,acount_id)
+   VALUES
+    	 (#{recharge},#{updateDate},#{acountId})  
+</insert>  
+<!-- 更新财务 -->
+<update id="updateFinance" parameterType="Finance" >  
+    UPDATE 
+    	finance_tb 
+    <set>
+    <if test="recharge!=null">
+    	recharge=#{recharge},
+    </if>
+    <if test="updateDate!=null">
+    	update_date=#{updateDate},
+    </if>
+    <if test="acountId!=null">
+    	acount_id=#{acountId}
+    </if>
+    </set>
+    WHERE
+    	 finance_id=#{financeId} 
+</update> 
+<!-- 删除财务-->
+<delete id="delFinance"  parameterType="Integer" >  
+    DELETE FROM
+    	 finance_tb 
+    	 WHERE finance_id=#{financeId}
+</delete>  
+<!-- 加载财务-->
+<select id="loadFinance" parameterType="Integer" resultType="Finance" >
+SELECT 
+		finance_id,
+    	recharge,
+    	update_date,
+    	acount_id
+FROM finance_tb 
+WHERE finance_id=#{financeId}
+</select>
+
+<!-- 分页查询财务-->
+<select id="browsePagingFinance" resultType="Finance">  
+    SELECT
+	    finance_id,
+    	recharge,
+    	update_date,
+    	acount_id
+	FROM finance_tb
+	<where>
+	<if test="acountId!=null">
+	AND  acount_id=#{acountId}
+	</if>
+	AND ${orderName} 
+	<if test="orderWay=='asc'">
+	<![CDATA[>=]]> 
+	</if>
+	<if test="orderWay=='desc'">
+	  <![CDATA[<= ]]>
+	</if>
+	(SELECT ${orderName} FROM finance_tb 
+	<where>
+	<if test="acountId!=null">
+	AND  acount_id=#{acountId}
+	</if>
+	</where>
+		ORDER BY 
+			${orderName}  ${orderWay}
+		LIMIT #{pageNum}, 1
+		) 
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(finance_id)
+	FROM finance_tb
+	<where>
+		<if test="acountId!=null">
+		AND  acount_id=#{acountId}
+		</if>
+	</where>
+</select>   
+   
+ 
+</mapper>

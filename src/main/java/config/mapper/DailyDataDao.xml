@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.DailyDataDao">
+<!-- 添加每日数据 -->
+<insert id="addDailyData" parameterType="DailyData" keyProperty="dailyDataId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  daily_data_tb 
+   		 (register_number,recharge,record_date,create_date,app_id
+   		 <if test="acountId!=null">
+   		 ,acount_id
+   		 </if>
+   		 )
+   VALUES
+    	 (#{registerNumber},#{recharge},#{recordDate},#{createDate},#{appId}
+    	 <if test="acountId!=null">
+    	 ,#{acountId}
+    	 </if>
+    	 )  
+</insert>  
+<!-- 更新每日数据 -->
+<update id="updateDailyData" parameterType="DailyData" >  
+    UPDATE 
+    	daily_data_tb 
+    <set>
+    	<if test="registerNumber!=null">
+    	register_number=#{registerNumber},
+    	 </if>
+    	<if test="recharge!=null">
+    	recharge=#{recharge},
+    	 </if>
+    	<if test="recordDate!=null">
+    	record_date=#{recordDate},
+    	 </if>
+    	<if test="createDate!=null">
+    	create_date=#{createDate},
+    	 </if>
+    	<if test="appId!=null">
+    	app_id=#{appId},
+    	 </if>
+    	<if test="acountId!=null">
+    	acount_id=#{acountId},
+    	 </if>
+    </set>
+    WHERE
+    	 daily_data_id=#{dailyDataId} 
+</update> 
+<!-- 删除每日数据-->
+<delete id="delDailyData"  parameterType="Integer" >  
+    DELETE FROM
+    	 daily_data_tb 
+    	 WHERE daily_data_id=#{dailyDataId}
+</delete>  
+<!-- 加载每日数据-->
+<select id="loadDailyData" parameterType="Integer" resultType="DailyData" >
+SELECT 
+		daily_data_id,
+	 	register_number,
+	 	recharge,
+	 	record_date,
+    	create_date,
+    	app_id,
+    	acount_id
+FROM daily_data_tb 
+<where>
+<if test="dailyDataId!=null">
+AND daily_data_id=#{dailyDataId}
+</if>
+<if test="recordDate!=null">
+AND  DATE(record_date)= DATE(#{recordDate})
+</if>
+<if test="appId!=null">
+AND app_id=#{appId}
+</if>
+<if test="acountId!=null">
+AND acount_id=#{acountId}
+</if>
+</where>
+</select>
+
+<!-- 分页查询每日数据-->
+<select id="browsePagingDailyData" resultType="DailyData">  
+    SELECT
+	    daily_data_id,
+	 	register_number,
+	 	recharge,
+	 	record_date,
+    	create_date,
+    	app_id,
+    	acount_id
+	FROM daily_data_tb
+	<where>
+	<if test="recordDate!=null">
+	AND  DATE(record_date)= DATE(#{recordDate})
+	</if>
+	<if test="appId!=null">
+	AND  app_id=#{appId}
+	</if>
+	<if test="acountId!=null">
+	AND acount_id=#{acountId}
+	</if>
+	AND ${orderName} 
+	<if test="orderWay=='asc'">
+	<![CDATA[>=]]> 
+	</if>
+	<if test="orderWay=='desc'">
+	  <![CDATA[<= ]]>
+	</if>
+	(SELECT ${orderName} FROM daily_data_tb 
+	<where>
+	<if test="recordDate!=null">
+	AND  DATE(record_date)= DATE(#{recordDate})
+	</if>
+	<if test="appId!=null">
+	AND  app_id=#{appId}
+	</if>
+	<if test="acountId!=null">
+	AND acount_id=#{acountId}
+	</if>
+	</where>
+		ORDER BY 
+			${orderName}  ${orderWay}
+		LIMIT #{pageNum}, 1
+		) 
+	</where>
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select> 
+
+<!-- 统计每日数据 -->
+<select id="statisticsDailyData"  resultType="DailyData">  
+	SELECT
+	 	COALESCE(sum(register_number),0) register_number,
+	 	COALESCE(sum(recharge),0) recharge,
+    	<if test="appId!=null">
+    	app_id,
+    	</if>
+    	<if test="acountId!=null">
+    	acount_id,
+    	</if>
+    	record_date,
+    	create_date
+	FROM daily_data_tb
+	<where>
+	<if test="startDate!=null">
+	AND  DATE(create_date)<![CDATA[>=]]> DATE(#{startDate})
+	</if>
+	<if test="endDate!=null">
+	AND  DATE(create_date)<![CDATA[<=]]> DATE(#{endDate})
+	</if>
+	<if test="appId!=null">
+	AND  app_id=#{appId}
+	</if>
+	<if test="acountId!=null">
+	AND acount_id=#{acountId}
+	</if>
+	</where>
+	GROUP BY DATE(record_date)
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageSize}
+</select>   
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(daily_data_id)
+	FROM daily_data_tb
+	<where>
+		<if test="recordDate!=null">
+		AND  DATE(record_date)= DATE(#{recordDate})
+		</if>
+		<if test="appId!=null">
+		AND  app_id=#{appId}
+		</if>
+		<if test="acountId!=null">
+		AND acount_id=#{acountId}
+		</if>
+	</where>
+</select>   
+   
+ 
+</mapper>

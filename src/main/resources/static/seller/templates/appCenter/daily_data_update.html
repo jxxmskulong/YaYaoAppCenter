@@ -1,0 +1,31 @@
+<div style="margin:10px;">
+<button class="btn btn-primary" ui-sref="main.dailyDataList({appId:dailyData.appId})">返回每日数据列表</button>
+</div>
+ <label  class="text-danger" style="font-size:30px;color:#ccc;">修改每日数据</label>
+<br/>
+<!-- 修改 -->
+	<form novalidate name="myUpdateDailyDataForm" ng-submit="updateDailyDataForm()">
+        <label  class="text-danger">※注册数</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="dailyData.registerNumber" name="registerNumber" required ng-pattern="/^\+?[1-9][0-9]*$/" placeholder="正整数">
+    <div class="text-danger alert alert-danger " ng-show="myUpdateDailyDataForm.registerNumber.$dirty && myUpdateDailyDataForm.registerNumber.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>输入正确注册数
+		 </div>
+  </div>
+    <label  class="text-danger">※充值金额</label>
+  <div class=" comment-input-margin">
+    <input type="text" class=" comment-input" ng-model="dailyData.recharge" name="recharge" required ng-pattern="/(^[+]?[1-9]\d*(\.\d{1,2})?$)|(^[+]?[0]{1}(\.\d{1,2})?$)/" placeholder="充值金额">
+    <div class="text-danger alert alert-danger " ng-show="myUpdateDailyDataForm.recharge.$dirty && myUpdateDailyDataForm.recharge.$invalid">
+				    	<i class="glyphicon glyphicon-info-sign"></i>输入正确充值金额
+		 </div>
+  </div>
+  <label  class="text-danger" >※记录日期</label>
+  <div class=" comment-input-margin  " >
+  <div class="input-daterange input-group">  
+            <input type="text" class="form-control" readonly="readonly" ng-model="dailyData.recordDate" name="recordDate" id="recordDateId" />  
+        </div> 
+  </div>
+  <input type="submit" class="btn btn-lg btn-danger" 
+  ng-disabled="myUpdateDailyDataForm.$invalid || formDisabled" value="提交"/>
+</form>
+<!-- 修改end-->
